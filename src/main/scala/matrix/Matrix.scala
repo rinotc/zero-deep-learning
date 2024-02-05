@@ -17,6 +17,9 @@ class Matrix(val rows: Int, val cols: Int) {
   @targetName("dotSymbol")
   def *(that: Matrix): Matrix = dot(that)
 
+  @targetName("plusSymbol")
+  def +(that: Matrix): Matrix = plus(that)
+
   def dot(that: Matrix): Matrix = {
     require(
       this.cols == that.rows, // 2 x 3 * 3 x 5 => 2 x 5
@@ -32,6 +35,21 @@ class Matrix(val rows: Int, val cols: Int) {
         sum += this(i, k) * that(k, j)
       }
       result(i, j) = sum
+    }
+    result
+  }
+
+  def plus(that: Matrix): Matrix = {
+    require(
+      this.shape == that.shape,
+      "The shape of the two matrices must be the same"
+    )
+    val result = new Matrix(this.rows, this.cols)
+    for {
+      i <- 0 until this.rows
+      j <- 0 until this.cols
+    } {
+      result(i, j) = this(i, j) + that(i, j)
     }
     result
   }

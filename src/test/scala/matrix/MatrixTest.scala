@@ -36,6 +36,23 @@ class MatrixTest extends BaseTest {
       actual shouldBe expected
     }
   }
+
+  describe("plus 行列の和のテスト") {
+    it("2x2と2x2の行列の和の計算が正しい") {
+      val matrix1  = Matrix(Array(Array(1.0, 2.0), Array(3.0, 4.0)))
+      val matrix2  = Matrix(Array(Array(5.0, 6.0), Array(7.0, 8.0)))
+      val expected = Matrix(Array(Array(6.0, 8.0), Array(10.0, 12.0)))
+      matrix1.plus(matrix2) should be(expected)
+    }
+
+    it("2x3 と 2x3 の行列の和の計算が正しい") {
+      val matrix1  = Matrix(Array(Array(1.0, 2.0, 3.0), Array(4.0, 5.0, 6.0)))
+      val matrix2  = Matrix(Array(Array(7.0, 8.0, 9.0), Array(10.0, 11.0, 12.0)))
+      val expected = Matrix(Array(Array(8.0, 10.0, 12.0), Array(14.0, 16.0, 18.0)))
+      matrix1.plus(matrix2) should be(expected)
+    }
+  }
+
   describe("等価性のテスト") {
     it("要素が一つでも異なれば、false") {
       val matrix1 = Matrix(Array(Array(1.0, 2.0), Array(3.0, 4.0)))
