@@ -15,7 +15,5 @@ trait ActivationFunction {
     result
   }
 
-  def apply(xs: Seq[Double]): Seq[Double] = xs.map(apply1)
-
   def apply1(x: Double): Double
 }
