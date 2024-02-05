@@ -8,6 +8,8 @@ import scala.annotation.targetName
 class Matrix(val rows: Int, val cols: Int) {
   private val data: Array[Array[Double]] = Array.ofDim[Double](rows, cols)
 
+  def apply(row: Int): Array[Double] = data(row)
+
   def apply(row: Int, col: Int): Double = data(row)(col)
 
   def update(row: Int, col: Int, value: Double): Unit = {
