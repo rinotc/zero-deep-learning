@@ -2,6 +2,9 @@ package matrix
 
 import scala.annotation.targetName
 
+/**
+ * 行列
+ */
 class Matrix(val rows: Int, val cols: Int) {
   private val data: Array[Array[Double]] = Array.ofDim[Double](rows, cols)
 
@@ -35,9 +38,13 @@ class Matrix(val rows: Int, val cols: Int) {
 
   def shape: (Int, Int) = (rows, cols)
 
-  override def toString: String = {
+  def prettyString: String = {
     val rowsStrings = for (row <- data) yield row.mkString(" ")
     rowsStrings.mkString("\n")
+  }
+  override def toString: String = {
+    val dataStr = data.map(_.mkString("[", ", ", "]")).mkString("[", ", ", "]")
+    s"Matrix(shape=($rows, $cols), data=$dataStr)"
   }
 
   private def canEqual(other: Any): Boolean = other.isInstanceOf[Matrix]
@@ -74,5 +81,9 @@ object Matrix {
       matrix(i, j) = data(i)(j)
     }
     matrix
+  }
+
+  def apply(data: Array[Array[Int]]): Matrix = {
+    apply(data.map(_.map(_.toDouble)))
   }
 }

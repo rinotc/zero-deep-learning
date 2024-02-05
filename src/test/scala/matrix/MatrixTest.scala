@@ -4,14 +4,14 @@ import base.BaseTest
 
 class MatrixTest extends BaseTest {
 
-  it("toString") {
+  it("prettyString") {
     val matrix = new Matrix(2, 2)
     matrix.update(0, 0, 1)
     matrix.update(0, 1, 2)
     matrix.update(1, 0, 3)
     matrix.update(1, 1, 4)
     val expected = "1.0 2.0\n3.0 4.0"
-    matrix.toString should be(expected)
+    matrix.prettyString should be(expected)
   }
 
   describe("dot 行列の積のテスト") {
