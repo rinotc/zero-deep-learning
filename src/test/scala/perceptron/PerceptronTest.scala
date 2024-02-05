@@ -1,6 +1,7 @@
 package perceptron
 
 import base.BaseTest
+import perceptron.Perceptron
 
 class PerceptronTest extends BaseTest {
 
