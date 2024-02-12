@@ -1,10 +1,18 @@
 import activationfunction.{ActivationFunction, IdentityFunction, SigmoidFunction}
 import matrix.Matrix
+import mnist.Mnist.*
 import neuralnetwork.{Layer, NeuralNetwork}
 
+import java.awt.{Color, Graphics, Graphics2D}
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Path, Paths}
-import scala.io.Source
+import javax.swing.{JFrame, JPanel}
+import scala.io.{BufferedSource, Source}
+import scala.util.{Try, Using}
+import io.circe.parser.parse
+
+given Conversion[Float, Double] with
+  def apply(f: Float): Double = f.toDouble
 
 @main
 def main(): Unit = {
@@ -78,36 +86,14 @@ def main3(): Unit = {
 
 @main
 def main4(): Unit = {
-  def loadImages(path: Path): Array[Array[Float]] = {
-    val buffer      = ByteBuffer.wrap(Files.readAllBytes(path))
-    val magicNumber = buffer.getInt
-    assert(magicNumber == 2051)
-    val numImages = buffer.getInt
-    val numRows   = buffer.getInt
-    val numCols   = buffer.getInt
-    val images    = Array.ofDim[Float](numImages, numRows * numCols)
-    for {
-      i <- 0 until numImages
-      j <- 0 until numRows * numCols
-    } images(i)(j) = buffer.get() & 0xff
-    images
-  }
-//
-//  def loadLabels(path: String): Array[Int] = {
-//    val buffer      = ByteBuffer.wrap(Files.readAllBytes(Paths.get(path)))
-//    val magicNumber = buffer.getInt
-//    assert(magicNumber == 2049)
-//    val numLabels = buffer.getInt
-//    val labels    = new Array[Int](numLabels)
-//    for (i <- 0 until numLabels) labels(i) = buffer.get()
-//    labels
-//  }
+  val trainImages = Matrix(loadImages(`train-image-idx3-ubyte`))
+  val trainLabels = loadLabels(`train-labels-idx1-ubyte`)
+  println(trainImages.shape)
+  println(trainLabels.length)
+  showImage(trainImages(0).map(_.toInt))
+  showImage(trainImages(1).map(_.toInt))
 
-//  val trainImages = loadImages("resources/train-images-idx3-ubyte/train-images-idx3-ubyte")
-//  val trainLabels = loadLabels("resources/train-labels-idx1-ubyte/train-labels-idx1-ubyte")
-//  val testImages  = loadImages("resources/t10k-images-idx3-ubyte/t10k-images-idx3-ubyte")
-//  val testLabels  = loadLabels("resources/t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte")
-  val path = getClass.getResource("/train-images-idx3-ubyte/train-images-idx3-ubyte").getPath
-  val trainImages: Array[Array[Float]] = loadImages(Paths.get(path))
-  println(trainImages.mkString("Array(", ", ", ")"))
+  val source: BufferedSource  = Source.fromResource("sample_weight.json")
+  val jsonString: Try[String] = Using(source)(_.mkString)
+  val json                    = parse(jsonString.get)
 }

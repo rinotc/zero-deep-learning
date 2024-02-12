@@ -6,6 +6,9 @@ lazy val root = (project in file("."))
   .settings(
     name := "zero-deep-learning",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.2.15" % Test
+      "org.scalatest" %% "scalatest"     % "3.2.15" % Test,
+      "io.circe"      %% "circe-core"    % "0.14.1",
+      "io.circe"      %% "circe-generic" % "0.14.1",
+      "io.circe"      %% "circe-parser"  % "0.14.1"
     )
   )
