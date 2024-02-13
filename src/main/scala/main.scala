@@ -1,18 +1,16 @@
 import activationfunction.{ActivationFunction, IdentityFunction, SigmoidFunction}
+import io.circe.parser.parse
 import matrix.Matrix
-import mnist.Mnist.*
+import mnist.Mnist.{loadImages, showImage}
 import neuralnetwork.{Layer, NeuralNetwork}
 
 import java.awt.{Color, Graphics, Graphics2D}
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Path, Paths}
 import javax.swing.{JFrame, JPanel}
 import scala.io.{BufferedSource, Source}
 import scala.util.{Try, Using}
-import io.circe.parser.parse
-
-given Conversion[Float, Double] with
-  def apply(f: Float): Double = f.toDouble
 
 @main
 def main(): Unit = {
@@ -86,14 +84,18 @@ def main3(): Unit = {
 
 @main
 def main4(): Unit = {
-  val trainImages = Matrix(loadImages(`train-image-idx3-ubyte`))
-  val trainLabels = loadLabels(`train-labels-idx1-ubyte`)
+  given Conversion[Float, Double] with
+    def apply(f: Float): Double = f.toDouble
+
+  val pathString  = getClass.getResource("/train-images.idx3-ubyte").getPath
+  val path        = Paths.get(pathString)
+  val trainImages = Matrix(loadImages(path))
   println(trainImages.shape)
-  println(trainLabels.length)
+//  println(trainLabels.length)
   showImage(trainImages(0).map(_.toInt))
   showImage(trainImages(1).map(_.toInt))
 
-  val source: BufferedSource  = Source.fromResource("sample_weight.json")
-  val jsonString: Try[String] = Using(source)(_.mkString)
-  val json                    = parse(jsonString.get)
+//  val source: BufferedSource  = Source.fromResource("sample_weight.json")
+//  val jsonString: Try[String] = Using(source)(_.mkString)
+//  val json                    = parse(jsonString.get)
 }
