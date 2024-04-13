@@ -1,7 +1,7 @@
 package activationfunction
 
 import base.BaseTest
-import matrix.Matrix
+import com.github.rinotc.smatrix.immutable.Matrix
 
 class SoftmaxFunctionTest extends BaseTest {
 

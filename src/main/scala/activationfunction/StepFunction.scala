@@ -7,5 +7,5 @@ import activationfunction.ActivationFunction
  */
 object StepFunction extends ActivationFunction {
 
-  def apply1(x: Double): Double = if (x > 0) 1 else 0
+  def apply1(x: Double): Double = if x > 0 then 1 else 0
 }

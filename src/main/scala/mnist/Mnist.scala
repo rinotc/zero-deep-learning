@@ -1,5 +1,7 @@
 package mnist
 
+import com.github.rinotc.smatrix.immutable.Matrix
+
 import java.awt.Color
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Path, Paths}
@@ -7,6 +9,9 @@ import javax.swing.{JFrame, JPanel, WindowConstants}
 
 //noinspection NoTargetNameAnnotationForOperatorLikeDefinition
 object Mnist {
+
+  given Conversion[Vector[Int], Array[Int]] with
+    def apply(v: Vector[Int]): Array[Int] = v.toArray
 
   /**
    * これは60,000枚の訓練画像データを含んでいます。 各画像は28x28ピクセルのグレースケール画像で、各ピクセルの値は0から255までの整数です
@@ -45,6 +50,13 @@ object Mnist {
     images
   }
 
+  /**
+   * ラベルデータを読み込む
+   * @param path
+   *   ラベルデータのパス
+   * @return
+   *   ラベルデータ
+   */
   def loadLabels(path: Path): Array[Int] = {
     val buffer      = ByteBuffer.wrap(Files.readAllBytes(path))
     val magicNumber = buffer.getInt
@@ -55,6 +67,11 @@ object Mnist {
     labels
   }
 
+  /**
+   * 画像を表示する
+   * @param bytes
+   *   画像データ
+   */
   def showImage(bytes: Array[Int]): Unit = {
     val numRows = 28
     val numCols = 28
@@ -82,4 +99,76 @@ object Mnist {
     frame.setContentPane(panel)
     frame.setVisible(true)
   }
+
+  def showImage(bytes: Seq[Int]): Unit = showImage(bytes.toArray)
+
+  /**
+   * MNISTデータセットの読み込み
+   *
+   * @param normalize
+   *   画像のピクセル値を0.0-1.0に正規化する
+   * @param flatten
+   *   画像を一次元配列にするかどうか
+   * @param one_hot_label
+   *   one_hot_labelが`true`の場合、ラベルはone-hot配列として返す. one-hot配列とは、たとえば[0,0,1,0,0,0,0,0,0,0]のような配列
+   */
+  def loadMnist(
+      normalize: Boolean = true,
+      flatten: Boolean = true,
+      one_hot_label: Boolean = false
+  ): LoadMnistResult = {
+    val trainImages = loadImages(`train-image-idx3-ubyte`).map(_.map(_.toDouble))
+    val trainLabels = loadLabels(`train-labels-idx1-ubyte`)
+    val testImages  = loadImages(`t10k-images-idx3-ubyte`).map(_.map(_.toDouble))
+    val testLabels  = loadLabels(`t10k-labels-idx1-ubyte`)
+
+    if (normalize) {
+      for (i <- trainImages.indices) {
+        for (j <- trainImages(i).indices) {
+          val x = trainImages(i)(j)
+          trainImages(i)(j) = trainImages(i)(j) / 255.0
+        }
+      }
+      for (i <- testImages.indices) {
+        for (j <- testImages(i).indices) {
+          testImages(i)(j) = testImages(i)(j) / 255
+        }
+      }
+    }
+
+    if (one_hot_label) {
+      val newTrainLabels = Array.ofDim[Int](trainLabels.length, 10)
+      for (i <- trainLabels.indices) {
+        newTrainLabels(i)(trainLabels(i)) = 1
+      }
+      val newTestLabels = Array.ofDim[Int](testLabels.length, 10)
+      for (i <- testLabels.indices) {
+        newTestLabels(i)(testLabels(i)) = 1
+      }
+    }
+
+//    if (flatten) {
+//      LoadMnistResult(
+//        Matrix(trainImages),
+//        Matrix(trainLabels.map(Array(_))),
+//        Matrix(testImages),
+//        Matrix(testLabels.map(Array(_)))
+//      )
+//    } else {
+//      LoadMnistResult(
+//        Matrix(trainImages.map(_.map(Array(_)))),
+//        Matrix(trainLabels.map(Array(_))),
+//        Matrix(testImages.map(_.map(Array(_)))),
+//        Matrix(testLabels.map(Array(_)))
+//      )
+//    }
+    ???
+  }
+
+  case class LoadMnistResult(
+      trainImages: Matrix[Double],
+      trainLabels: Matrix[Int],
+      testImages: Matrix[Double],
+      testLabels: Matrix[Int]
+  )
 }

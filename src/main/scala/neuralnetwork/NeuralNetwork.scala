@@ -1,6 +1,6 @@
 package neuralnetwork
 
-import matrix.Matrix
+import com.github.rinotc.smatrix.immutable.Matrix
 
 /** ニューラルネットワーク */
 class NeuralNetwork private (
@@ -8,7 +8,7 @@ class NeuralNetwork private (
 ) {
   private val layers: List[Layer] = _layers.sorted
 
-  def forward(X: Matrix): Matrix = {
+  def forward(X: Matrix[Double]): Matrix[Double] = {
     layers.foldLeft(X) { (X, layer) =>
       layer.forward(X)
     }
